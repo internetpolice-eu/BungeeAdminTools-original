@@ -2,9 +2,9 @@ name: Maven build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ premiumupgrade ]
   pull_request:
-    branches: [ master ]
+    branches: [ premiumupgrade ]
 
 jobs:
   build_and_test:
@@ -29,19 +29,19 @@ jobs:
 
       # Deploy steps when pushed to master
       - name: Install SSH key
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/premiumupgrade' }}
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
       - name: Rsync deploy mvn repo
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/premiumupgrade' }}
         run: |
           rsync -r --quiet -e "ssh -p 2222 -o StrictHostKeyChecking=no" \
           target/mvn-repo/ \
           travis@travis.internetpolice.eu:WWW/repo/
       - name: Rsync deploy final artifact
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/premiumupgrade' }}
         run: |
           rsync -r --quiet -e "ssh -p 2222 -o StrictHostKeyChecking=no" \
           target/BungeeAdminTools-*.jar \
