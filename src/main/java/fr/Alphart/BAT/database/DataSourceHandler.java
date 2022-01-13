@@ -20,9 +20,6 @@ import java.util.logging.Level;
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import net.md_5.bungee.api.ProxyServer;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.varia.NullAppender;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharStreams;
@@ -65,7 +62,6 @@ public class DataSourceHandler {
 		this.password = Preconditions.checkNotNull(password);
 
 		BAT.getInstance().getLogger().config("Initialization of HikariCP in progress ...");
-		BasicConfigurator.configure(new NullAppender());
 		ds = new HikariDataSource();
 		String connUrl = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + 
             "?useLegacyDatetimeCode=false&characterEncoding=utf8&serverTimezone=" + TimeZone.getDefault().getID();
