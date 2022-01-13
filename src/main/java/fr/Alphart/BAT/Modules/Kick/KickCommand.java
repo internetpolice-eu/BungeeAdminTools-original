@@ -1,10 +1,11 @@
 package fr.Alphart.BAT.Modules.Kick;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static fr.Alphart.BAT.I18n.I18n._;
+import static fr.Alphart.BAT.I18n.I18n.format;
 
 import java.util.UUID;
 
+import fr.Alphart.BAT.I18n.I18n;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ListenerInfo;
@@ -53,7 +54,7 @@ public class KickCommand extends CommandHandler {
 			}
                         
             checkArgument(args.length != 1 || !BAT.getInstance().getConfiguration().isMustGiveReason(),
-                _("noReasonInCommand"));
+                format("noReasonInCommand"));
                         
 			final String pName = args[0];
 	    	final ProxiedPlayer player = ProxyServer.getInstance().getPlayer(pName);
@@ -62,13 +63,13 @@ public class KickCommand extends CommandHandler {
 	    		final String pServer = player.getServer().getInfo().getName();
    				checkArgument(
 					pServer != null && !pServer.equals(player.getPendingConnection().getListener().getDefaultServer()),
-					_("cantKickDefaultServer", new String[] { pName }));
+					I18n.format("cantKickDefaultServer", new String[] { pName }));
 
    				checkArgument(
 					PermissionManager.canExecuteAction(Action.KICK, sender, player.getServer().getInfo().getName()),
-					_("noPerm"));
+					format("noPerm"));
 
-   				checkArgument(!PermissionManager.isExemptFrom(Action.KICK, pName), _("isExempt"));
+   				checkArgument(!PermissionManager.isExemptFrom(Action.KICK, pName), format("isExempt"));
 
    				final String returnedMsg = kick.kick(player, sender.getName(),
 					(args.length == 1) ? IModule.NO_REASON : Utils.getFinalArg(args, 1));
@@ -77,7 +78,7 @@ public class KickCommand extends CommandHandler {
                 }
 	    	}else{
 	    		if(!BAT.getInstance().getRedis().isRedisEnabled()){
-	    			throw new IllegalArgumentException(_("playerNotFound"));
+	    			throw new IllegalArgumentException(format("playerNotFound"));
 	    		}
 	    		// Check if the per server kick with Redis is working fine.
 		    	UUID pUUID = RedisBungee.getApi().getUuidFromName(pName, true);
@@ -85,7 +86,7 @@ public class KickCommand extends CommandHandler {
 		    	  pUUID = Core.getUUIDfromString(Core.getUUID(pName));
 		    	}
 		    	final String pServer = RedisBungee.getApi().getServerFor(pUUID).getName();
-		    	checkArgument(pUUID != null, _("playerNotFound"));
+		    	checkArgument(pUUID != null, format("playerNotFound"));
 		    	// Check if the server of the target isn't the default one. We assume there is the same default server on both Bungee
 		    	// TODO: Add a method to check if it's really on default server
 		    	String defaultServer = null;
@@ -93,10 +94,10 @@ public class KickCommand extends CommandHandler {
 		    		defaultServer = listener.getDefaultServer();
 		    	}
 		    	if(defaultServer == null || pServer.equals(defaultServer)){
-		    		throw new IllegalArgumentException(_("cantKickDefaultServer", new String[] { pName }));
+		    		throw new IllegalArgumentException(I18n.format("cantKickDefaultServer", new String[] { pName }));
 		    	}
 		    	
-                checkArgument(PermissionManager.canExecuteAction(Action.KICK, sender, pServer), _("noPerm"));
+                checkArgument(PermissionManager.canExecuteAction(Action.KICK, sender, pServer), format("noPerm"));
 		    	
 		    	final String returnedMsg;
 		    	returnedMsg = kick.kickSQL(pUUID.toString().replaceAll("-", ""), RedisBungee.getApi().getServerFor(pUUID).getName(), sender.getName(), 
@@ -123,13 +124,13 @@ public class KickCommand extends CommandHandler {
 			final String pName = args[0];
                         
             checkArgument(args.length != 1 || !BAT.getInstance().getConfiguration().isMustGiveReason(),
-                    _("noReasonInCommand"));
+                    format("noReasonInCommand"));
 
 			if (BAT.getInstance().getRedis().isRedisEnabled()) {
 			    	UUID pUUID = RedisBungee.getApi().getUuidFromName(pName, true);
-			    	checkArgument(pUUID != null, _("playerNotFound"));
+			    	checkArgument(pUUID != null, format("playerNotFound"));
 			    	
-			    	checkArgument(!PermissionManager.isExemptFrom(Action.KICK, pName), _("isExempt"));
+			    	checkArgument(!PermissionManager.isExemptFrom(Action.KICK, pName), format("isExempt"));
 			    	
 			    	final ProxiedPlayer player = ProxyServer.getInstance().getPlayer(pName);
 			    	final String returnedMsg;
@@ -147,9 +148,9 @@ public class KickCommand extends CommandHandler {
 			    	}
 			} else {
 			final ProxiedPlayer player = ProxyServer.getInstance().getPlayer(pName);
-				checkArgument(player != null, _("playerNotFound"));
+				checkArgument(player != null, format("playerNotFound"));
 
-				checkArgument(!PermissionManager.isExemptFrom(Action.KICK, pName), _("isExempt"));
+				checkArgument(!PermissionManager.isExemptFrom(Action.KICK, pName), format("isExempt"));
 
 				final String returnedMsg = kick.gKick(player, sender.getName(),
 					(args.length == 1) ? IModule.NO_REASON : Utils.getFinalArg(args, 1));

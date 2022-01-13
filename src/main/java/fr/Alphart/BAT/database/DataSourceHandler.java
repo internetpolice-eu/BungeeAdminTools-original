@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import net.md_5.bungee.api.ProxyServer;
 
 import org.apache.log4j.BasicConfigurator;
@@ -25,7 +26,6 @@ import org.apache.log4j.varia.NullAppender;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharStreams;
-import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.zaxxer.hikari.HikariDataSource;
 
 import fr.Alphart.BAT.BAT;
@@ -82,15 +82,13 @@ public class DataSourceHandler {
 		    int intOffset = Calendar.getInstance().getTimeZone().getOffset(Calendar.getInstance().getTimeInMillis()) / 1000;
 		    String offset = String.format("%02d:%02d", Math.abs(intOffset / 3600), Math.abs((intOffset / 60) % 60));
 		    offset = (intOffset >= 0 ? "+" : "-") + offset;
-			conn.createStatement().executeQuery("SET time_zone='" + offset + "';");
+			conn.createStatement().executeUpdate("SET time_zone='" + offset + "';");
 			conn.close();
 			BAT.getInstance().getLogger().config("BoneCP is loaded !");
 		} catch (final SQLException e) {
 			BAT.getInstance().getLogger().severe("BAT encounters a problem during the initialization of the database connection."
 					+ " Please check your logins and database configuration.");
-			if(e.getCause() instanceof CommunicationsException){
-			    BAT.getInstance().getLogger().severe(e.getCause().getMessage());
-			}
+			BAT.getInstance().getLogger().severe(e.getCause().getMessage());
 			if(BAT.getInstance().getConfiguration().isDebugMode()){
 			    BAT.getInstance().getLogger().log(Level.SEVERE, e.getMessage(), e);
 			}

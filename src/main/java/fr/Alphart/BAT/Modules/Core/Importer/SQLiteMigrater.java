@@ -2,6 +2,7 @@ package fr.Alphart.BAT.Modules.Core.Importer;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DataTruncation;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,8 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.mysql.jdbc.MysqlDataTruncation;
 
 import fr.Alphart.BAT.BAT;
 import fr.Alphart.BAT.Utils.CallbackUtils.ProgressCallback;
@@ -106,7 +105,7 @@ public class SQLiteMigrater extends Importer{
                             try{
                                 insertStatement.execute();
                             }catch(final SQLException exception){
-                                if(exception.getErrorCode() == 1062 || exception instanceof MysqlDataTruncation){
+                                if(exception.getErrorCode() == 1062 || exception instanceof DataTruncation){
                                   progressionCallback.onMinorError("A minor exception has been met : " + exception.getMessage()
                                       + " ---- The import will continue.");
                                 }else{

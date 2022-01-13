@@ -1,8 +1,8 @@
 package fr.Alphart.BAT.Modules.Core;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static fr.Alphart.BAT.I18n.I18n._;
-import static fr.Alphart.BAT.I18n.I18n.__;
+import static fr.Alphart.BAT.I18n.I18n.format;
+import static fr.Alphart.BAT.I18n.I18n.formatWithPrefix;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
@@ -150,10 +150,10 @@ public class CoreCommand extends BATCommand{
 				if (cmd.getBATPermission().isEmpty() || sender.hasPermission(cmd.getBATPermission()) || sender.hasPermission("bat.admin")) {
 					cmd.execute(sender, cleanArgs);
 				} else {
-					sender.sendMessage(__("noPerm"));
+					sender.sendMessage(formatWithPrefix("noPerm"));
 				}
 			} else {
-				sender.sendMessage(__("invalidCommand"));
+				sender.sendMessage(formatWithPrefix("invalidCommand"));
 			}
 		}
 	}
@@ -254,7 +254,7 @@ public class CoreCommand extends BATCommand{
 				throws IllegalArgumentException {
 			final String entity = args[0];
 			if (Utils.validIP(entity)) {
-				checkArgument(sender.hasPermission("bat.admin") || sender.hasPermission(Action.LOOKUP.getPermission() + ".ip"), _("noPerm"));
+				checkArgument(sender.hasPermission("bat.admin") || sender.hasPermission(Action.LOOKUP.getPermission() + ".ip"), format("noPerm"));
 				if(args.length == 1){
 					for (final BaseComponent[] msg : lookupFormatter.getSummaryLookupIP(entity)) {
 						sender.sendMessage(msg);
@@ -433,7 +433,7 @@ public class CoreCommand extends BATCommand{
 		public void onCommand(final CommandSender sender, final String[] args, final boolean confirmedCmd, boolean broadcast)
 				throws IllegalArgumentException {
 			if (!CommandQueue.executeQueueCommand(sender)) {
-				sender.sendMessage(__("noQueuedCommand"));
+				sender.sendMessage(formatWithPrefix("noQueuedCommand"));
 			}
 		}
 

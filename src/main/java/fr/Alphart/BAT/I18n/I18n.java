@@ -126,7 +126,7 @@ public class I18n {
 	 * @param formatObject
 	 * @return String
 	 */
-	public static String _(final String message, final String[] formatObject) {
+	public static String format(final String message, final String[] formatObject) {
 		try {
 			final MessageFormat mf = new MessageFormat(getString(message));
 			return ChatColor.translateAlternateColorCodes('&', mf.format(preprocessArgs(formatObject)));
@@ -141,7 +141,7 @@ public class I18n {
 	 * @param message
 	 * @return String
 	 */
-	public static String _(final String message) {
+	public static String format(final String message) {
 		try {
 			// Replace the quote as the message formatter does
 			return ChatColor.translateAlternateColorCodes('&', getString(message).replace("''", "'"));
@@ -151,13 +151,13 @@ public class I18n {
 	}
 
 	/**
-	 * Same as {@link #_(String, String[])} except it adds a prefix
+	 * Same as {@link #format(String, String[])} except it adds a prefix
 	 * 
 	 * @param message
 	 * @param formatObject
 	 * @return
 	 */
-	public static BaseComponent[] __(final String message, final String[] formatObject) {
+	public static BaseComponent[] formatWithPrefix(final String message, final String[] formatObject) {
 		try {
 			final MessageFormat mf = new MessageFormat(getString(message));
 			return BAT.__(mf.format(preprocessArgs(formatObject)));
@@ -167,13 +167,13 @@ public class I18n {
 	}
 
 	/**
-	 * Same as {@link #_(String, String[])} except it adds a prefix
+	 * Same as {@link #format(String, String[])} except it adds a prefix
 	 * 
 	 * @param message
 	 * @param formatObject
 	 * @return
 	 */
-	public static BaseComponent[] __(final String message) {
+	public static BaseComponent[] formatWithPrefix(final String message) {
 		try {
 			// Replace the quote as the message formatter does
 			return BAT.__(getString(message).replace("''", "'"));
