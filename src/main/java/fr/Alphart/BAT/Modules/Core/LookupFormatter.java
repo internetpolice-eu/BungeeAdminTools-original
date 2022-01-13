@@ -39,10 +39,10 @@ public class LookupFormatter {
     private static final int entriesPerPage = 15;
     private final String lookupHeader;
     private final String lookupFooter;
-    private final String currentPunishmentHover= "{effect=\"hover\" text=\"{server}\" onHoverText=\"&eStaff: &a{staff}, &eReason: &a{reason},"
+    private final String currentPunishmentHover = "{effect=\"hover\" text=\"{server}\" onHoverText=\"&eStaff: &a{staff}, &eReason: &a{reason},"
         + "{newlinehover} &eBegin: &a{begin}\"}";
-    
-    public LookupFormatter(){
+
+    public LookupFormatter() {
         lookupHeader = format("perModuleLookupHeader");
         lookupFooter = format("perModuleLookupFooter");
         modules = BAT.getInstance().getModules();
@@ -106,110 +106,110 @@ public class LookupFormatter {
         bansNumber = pDetails.getBans().size() + ipDetails.getBans().size();
         mutesNumber = pDetails.getMutes().size() + ipDetails.getMutes().size();
         kicksNumber = pDetails.getKicks().size();
-        
+
         // Load the lookup pattern
         String lookupPattern = format("playerLookup");
-        
+
         // Initialize all the strings to prepare the big replace
         String connection_state;
         if (BAT.getInstance().getRedis().isRedisEnabled()) {
-                UUID pUUID = RedisBungee.getApi().getUuidFromName(pName, true);
-                if(pUUID != null && RedisBungee.getApi().isPlayerOnline(pUUID)){
-                    ServerInfo si = RedisBungee.getApi().getServerFor(pUUID);
-                    connection_state = format("connectionStateOnline").replace("{server}", si != null ? si.getName() : "unknown state");
-                }else{
-                    connection_state = format("connectionStateOffline");
-                }
+            UUID pUUID = RedisBungee.getApi().getUuidFromName(pName, true);
+            if (pUUID != null && RedisBungee.getApi().isPlayerOnline(pUUID)) {
+                ServerInfo si = RedisBungee.getApi().getServerFor(pUUID);
+                connection_state = format("connectionStateOnline").replace("{server}", si != null ? si.getName() : "unknown state");
+            } else {
+                connection_state = format("connectionStateOffline");
+            }
         } else {
-            if(ProxyServer.getInstance().getPlayer(pName) != null){
+            if (ProxyServer.getInstance().getPlayer(pName) != null) {
                 connection_state = format("connectionStateOnline")
-                        .replace("{server}", ProxyServer.getInstance().getPlayer(pName).getServer().getInfo().getName());
-            }else{
+                    .replace("{server}", ProxyServer.getInstance().getPlayer(pName).getServer().getInfo().getName());
+            } else {
                 connection_state = format("connectionStateOffline");
             }
 
         }
-        
+
         final String joinChar = "&f, &3";
         final String ban_servers = !banServers.isEmpty()
-                ? Joiner.on(joinChar).join(banServers).toLowerCase()
-                : format("none");
+            ? Joiner.on(joinChar).join(banServers).toLowerCase()
+            : format("none");
         final String banip_servers = !banIPServers.isEmpty()
-                ? Joiner.on(joinChar).join(banIPServers).toLowerCase()
-                : format("none");
+            ? Joiner.on(joinChar).join(banIPServers).toLowerCase()
+            : format("none");
         final String mute_servers = !muteServers.isEmpty()
-                ? Joiner.on(joinChar).join(muteServers).toLowerCase()
-                : format("none");
+            ? Joiner.on(joinChar).join(muteServers).toLowerCase()
+            : format("none");
         final String muteip_servers = !muteIPServers.isEmpty()
-                ? Joiner.on(joinChar).join(muteIPServers).toLowerCase()
-                : format("none");
+            ? Joiner.on(joinChar).join(muteIPServers).toLowerCase()
+            : format("none");
 
         final String first_login = pDetails.getFirstLogin() != EntityEntry.noDateFound
-                ? Core.defaultDF.format(new Date(pDetails.getFirstLogin().getTime()))
-                : format("unknownDate");
+            ? Core.defaultDF.format(new Date(pDetails.getFirstLogin().getTime()))
+            : format("unknownDate");
         final String last_login = pDetails.getLastLogin() != EntityEntry.noDateFound
-                ? Core.defaultDF.format(new Date(pDetails.getLastLogin().getTime()))
-                : format("unknownDate");
+            ? Core.defaultDF.format(new Date(pDetails.getLastLogin().getTime()))
+            : format("unknownDate");
         final String last_ip = !"0.0.0.0".equals(pDetails.getLastIP())
-                ? ((displayIP) ? pDetails.getLastIP() : format("hiddenIp"))
-                : format("unknownIp");
-                
+            ? ((displayIP) ? pDetails.getLastIP() : format("hiddenIp"))
+            : format("unknownIp");
+
         String name_history_list;
         // Create a function for that or something better than a big chunk of code inside the lookup
-        if(Core.isOnlineMode()){
-            try{
+        if (Core.isOnlineMode()) {
+            try {
                 name_history_list = Joiner.on("&e, &a").join(MojangAPIProvider.getPlayerNameHistory(pName));
-            }catch(final RuntimeException e){
+            } catch (final RuntimeException e) {
                 name_history_list = "unable to fetch player's name history. Check the logs";
                 BAT.getInstance().getLogger().severe("An error occured while fetching " + pName + "'s name history from mojang servers."
-                        + "Please report this : ");
+                    + "Please report this : ");
                 e.printStackTrace();
             }
-        }else{
+        } else {
             name_history_list = "offline server";
         }
-        
+
         int commentsNumber = pDetails.getComments().size();
         String last_comments = "";
         // We need to parse the number of last comments from the lookup pattern
         final Pattern lastCommentsPattern = Pattern.compile("(?:.|\n)*?\\{last_comments:(\\d*)\\}(?:.|\n)*?");
         final Matcher matcher = lastCommentsPattern.matcher(lookupPattern);
-        try{
-            if(!matcher.matches()){
+        try {
+            if (!matcher.matches()) {
                 throw new NumberFormatException();
             }
             int nLastComments = Integer.parseInt(matcher.group(1));
-            if(nLastComments < 1){
+            if (nLastComments < 1) {
                 throw new NumberFormatException();
             }
             int i = 0;
-            for(final CommentEntry comm : pDetails.getComments()){
+            for (final CommentEntry comm : pDetails.getComments()) {
                 last_comments += I18n.format("commentRow", new String[]{String.valueOf(comm.getID()),
-                        (comm.getType() == Type.NOTE) ? "&eComment" : "&cWarning", comm.getContent(),
-                        comm.getFormattedDate(), comm.getAuthor()});
+                    (comm.getType() == Type.NOTE) ? "&eComment" : "&cWarning", comm.getContent(),
+                    comm.getFormattedDate(), comm.getAuthor()});
                 i++;
-                if(i == 3){
+                if (i == 3) {
                     break;
                 }
             }
-            if(last_comments.isEmpty()){
+            if (last_comments.isEmpty()) {
                 last_comments = format("none");
             }
-        }catch(final NumberFormatException e){
+        } catch (final NumberFormatException e) {
             last_comments = "Unable to parse the number of last_comments";
         }
-        
+
         final String ip_users;
-        if("0.0.0.0".equals(pDetails.getLastIP())){
-          ip_users = format("unknownIp");
-        }else{
-          ip_users = !ipDetails.getUsers().isEmpty()
-              ? Joiner.on(joinChar).join(ipDetails.getUsers())
-              : format("none");
+        if ("0.0.0.0".equals(pDetails.getLastIP())) {
+            ip_users = format("unknownIp");
+        } else {
+            ip_users = !ipDetails.getUsers().isEmpty()
+                ? Joiner.on(joinChar).join(ipDetails.getUsers())
+                : format("none");
         }
-        
+
         final List<BaseComponent[]> finalMessage = FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&',
-                lookupPattern
+            lookupPattern
                 .replace("{connection_state}", connection_state)
                 .replace("{ban_servers}", ban_servers).replace("{banip_servers}", banip_servers)
                 .replace("{mute_servers}", mute_servers).replace("{muteip_servers}", muteip_servers)
@@ -221,11 +221,11 @@ public class LookupFormatter {
                 .replace("{ip_users}", ip_users)
                 // '¤' is used as a space character, so we replace it with space and display correctly the escaped one
                 .replace("¤", " ").replace("\\¤", "¤")
-                ));
-        
+        ));
+
         return finalMessage;
     }
-    
+
     public List<BaseComponent[]> getSummaryLookupIP(final String ip) {
         final EntityEntry ipDetails = new EntityEntry(ip);
         if (!ipDetails.exist()) {
@@ -261,40 +261,40 @@ public class LookupFormatter {
         // Initialize all strings
         final String joinChar = "&f, &3";
         final String ip_users = !ipDetails.getUsers().isEmpty()
-                ? Joiner.on(joinChar).join(ipDetails.getUsers())
-                : format("none");
+            ? Joiner.on(joinChar).join(ipDetails.getUsers())
+            : format("none");
         final String ban_servers = !banServers.isEmpty()
-                ? Joiner.on(joinChar).join(banServers).toLowerCase()
-                : format("none");
+            ? Joiner.on(joinChar).join(banServers).toLowerCase()
+            : format("none");
         final String mute_servers = !muteServers.isEmpty()
-                ? Joiner.on(joinChar).join(muteServers).toLowerCase()
-                : format("none");
-        
+            ? Joiner.on(joinChar).join(muteServers).toLowerCase()
+            : format("none");
+
         String replacedString = format("ipLookup")
-                .replace("{ban_servers}", ban_servers).replace("{mute_servers}", mute_servers)
-                .replace("{bans_number}", String.valueOf(bansNumber)).replace("{mutes_number}", String.valueOf(mutesNumber))
-                .replace("{ip}", ip).replace("{ip_users}", ip_users)
-                // '¤' is used as a space character, so we replace it with space and display correctly the escaped one
-                .replace("¤", " ").replace("\\¤", "¤");
-                
-        if(replacedString.contains("{ip_location}")){
+            .replace("{ban_servers}", ban_servers).replace("{mute_servers}", mute_servers)
+            .replace("{bans_number}", String.valueOf(bansNumber)).replace("{mutes_number}", String.valueOf(mutesNumber))
+            .replace("{ip}", ip).replace("{ip_users}", ip_users)
+            // '¤' is used as a space character, so we replace it with space and display correctly the escaped one
+            .replace("¤", " ").replace("\\¤", "¤");
+
+        if (replacedString.contains("{ip_location}")) {
             String ipLocation = "";
-            try{
+            try {
                 ipLocation = Utils.getIpDetails(ip);
-            }catch(final Exception e){
-                BAT.getInstance().getLogger().log(Level.SEVERE, 
-                        "Error while fetching ip location from the API. Please report this :", e);
+            } catch (final Exception e) {
+                BAT.getInstance().getLogger().log(Level.SEVERE,
+                    "Error while fetching ip location from the API. Please report this :", e);
                 ipLocation = "unresolvable ip location. Check your logs";
             }
             replacedString = replacedString.replace("{ip_location}", ipLocation);
         }
-        
+
         final List<BaseComponent[]> finalMessage = FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&',
-                replacedString));
+            replacedString));
 
         return finalMessage;
     }
-    
+
     public List<BaseComponent[]> getSummaryStaffLookup(final String staff, final boolean displayID) {
         int bans_number = 0;
         int unbans_number = 0;
@@ -303,50 +303,49 @@ public class LookupFormatter {
         int kicks_number = 0;
         int comments_number = 0;
         int warnings_number = 0;
-        try{
-            if(modules.isLoaded("ban")){
-                for(final BanEntry ban : modules.getBanModule().getManagedBan(staff)){
-                    if(staff.equalsIgnoreCase(ban.getStaff())){
+        try {
+            if (modules.isLoaded("ban")) {
+                for (final BanEntry ban : modules.getBanModule().getManagedBan(staff)) {
+                    if (staff.equalsIgnoreCase(ban.getStaff())) {
                         bans_number++;
                     }
-                    if(staff.equalsIgnoreCase(ban.getUnbanStaff())){
+                    if (staff.equalsIgnoreCase(ban.getUnbanStaff())) {
                         unbans_number++;
                     }
                 }
             }
-            if(modules.isLoaded("mute")){
-                for(final MuteEntry mute : modules.getMuteModule().getManagedMute(staff)){
-                    if(staff.equalsIgnoreCase(mute.getStaff())){
+            if (modules.isLoaded("mute")) {
+                for (final MuteEntry mute : modules.getMuteModule().getManagedMute(staff)) {
+                    if (staff.equalsIgnoreCase(mute.getStaff())) {
                         mutes_number++;
                     }
-                    if(staff.equalsIgnoreCase(mute.getUnmuteStaff())){
+                    if (staff.equalsIgnoreCase(mute.getUnmuteStaff())) {
                         unmutes_number++;
                     }
                 }
             }
-            if(modules.isLoaded("kick")){
-                for(final KickEntry kick : modules.getKickModule().getManagedKick(staff)){
-                    if(staff.equalsIgnoreCase(kick.getStaff())){
+            if (modules.isLoaded("kick")) {
+                for (final KickEntry kick : modules.getKickModule().getManagedKick(staff)) {
+                    if (staff.equalsIgnoreCase(kick.getStaff())) {
                         kicks_number++;
                     }
                 }
             }
-            if(modules.isLoaded("comment")){
-                for(final CommentEntry mute : modules.getCommentModule().getManagedComments(staff)){
-                    if(mute.getType() == Type.NOTE){
+            if (modules.isLoaded("comment")) {
+                for (final CommentEntry mute : modules.getCommentModule().getManagedComments(staff)) {
+                    if (mute.getType() == Type.NOTE) {
                         comments_number++;
-                    }
-                    else{
+                    } else {
                         warnings_number++;
                     }
                 }
             }
-        }catch(final InvalidModuleException e){
+        } catch (final InvalidModuleException e) {
             e.printStackTrace();
         }
-        
+
         final List<BaseComponent[]> finalMessage = FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&',
-                format("staffLookup")
+            format("staffLookup")
                 .replace("{bans_number}", String.valueOf(bans_number)).replace("{unbans_number}", String.valueOf(unbans_number))
                 .replace("{mutes_number}", String.valueOf(mutes_number)).replace("{unmutes_number}", String.valueOf(unmutes_number))
                 .replace("{kicks_number}", String.valueOf(kicks_number))
@@ -354,32 +353,32 @@ public class LookupFormatter {
                 .replace("{warnings_number}", String.valueOf(warnings_number))
                 .replace("{staff}", staff).replace("{uuid}", Core.getUUID(staff))
                 .replace("¤", " ").replace("\\¤", "¤")
-                ));
+        ));
 
         return finalMessage;
     }
-    
-    public List<BaseComponent[]> formatBanLookup(final String entity, final List<BanEntry> bans, 
-            int page, final boolean staffLookup) throws InvalidModuleException {
+
+    public List<BaseComponent[]> formatBanLookup(final String entity, final List<BanEntry> bans,
+                                                 int page, final boolean staffLookup) throws InvalidModuleException {
         final StringBuilder msg = new StringBuilder();
 
-        int totalPages = (int) Math.ceil((double)bans.size()/entriesPerPage);
-        if(bans.size() > entriesPerPage){
-            if(page > totalPages){
+        int totalPages = (int) Math.ceil((double) bans.size() / entriesPerPage);
+        if (bans.size() > entriesPerPage) {
+            if (page > totalPages) {
                 page = totalPages;
             }
             int beginIndex = (page - 1) * entriesPerPage;
             int endIndex = (beginIndex + entriesPerPage < bans.size()) ? beginIndex + entriesPerPage : bans.size();
-            for(int i=bans.size() -1; i > 0; i--){
-                if(i >= beginIndex && i < endIndex){
+            for (int i = bans.size() - 1; i > 0; i--) {
+                if (i >= beginIndex && i < endIndex) {
                     continue;
                 }
                 bans.remove(i);
             }
         }
         msg.append(lookupHeader.replace("{entity}", entity).replace("{module}", "Ban")
-                .replace("{page}", page + "/" + totalPages));
-        
+            .replace("{page}", page + "/" + totalPages));
+
         boolean isBan = false;
         for (final BanEntry banEntry : bans) {
             if (banEntry.isActive()) {
@@ -388,94 +387,94 @@ public class LookupFormatter {
         }
 
         // We begin with active ban
-        if(isBan){
+        if (isBan) {
             msg.append("&6&lActive bans: &e");
             final Iterator<BanEntry> it = bans.iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 final BanEntry ban = it.next();
-                if(!ban.isActive()){
+                if (!ban.isActive()) {
                     break;
                 }
                 final String begin = Core.defaultDF.format(ban.getBeginDate());
                 final String server = ban.getServer();
-                final String reason = ban.getReason();  
+                final String reason = ban.getReason();
                 final String end;
-                if(ban.getEndDate() == null){
+                if (ban.getEndDate() == null) {
                     end = "permanent ban";
-                }else{
+                } else {
                     end = Core.defaultDF.format(ban.getEndDate());
                 }
-                
+
                 msg.append("\n");
-                if(staffLookup){
+                if (staffLookup) {
                     msg.append(I18n.format("activeStaffBanLookupRow",
-                            new String[] { ban.getEntity(), begin, server, reason, end}));
-                }else{
+                        new String[]{ban.getEntity(), begin, server, reason, end}));
+                } else {
                     msg.append(I18n.format("activeBanLookupRow",
-                            new String[] { begin, server, reason, ban.getStaff(), end}));
+                        new String[]{begin, server, reason, ban.getStaff(), end}));
                 }
                 it.remove();
             }
         }
-        
-        if(!bans.isEmpty()){
+
+        if (!bans.isEmpty()) {
             msg.append("\n&7&lArchive bans: &e");
-            for(final BanEntry ban : bans){
+            for (final BanEntry ban : bans) {
                 final String begin = Core.defaultDF.format(ban.getBeginDate());
                 final String server = ban.getServer();
                 final String reason = ban.getReason();
-                
+
                 final String endDate;
-                if(ban.getEndDate() == null){
+                if (ban.getEndDate() == null) {
                     endDate = Core.defaultDF.format(ban.getUnbanDate());
-                }else{
+                } else {
                     endDate = Core.defaultDF.format(ban.getEndDate());
                 }
                 final String unbanReason = ban.getUnbanReason();
                 String unbanStaff = ban.getUnbanStaff();
-                if(unbanStaff == null){
+                if (unbanStaff == null) {
                     unbanStaff = "temporary ban";
                 }
-                
+
                 msg.append("\n");
-                if(staffLookup){
+                if (staffLookup) {
                     msg.append(I18n.format("archiveStaffBanLookupRow",
-                            new String[] { ban.getEntity(), begin, server, reason, endDate, unbanReason, unbanStaff}));
-                }else{
+                        new String[]{ban.getEntity(), begin, server, reason, endDate, unbanReason, unbanStaff}));
+                } else {
                     msg.append(I18n.format((staffLookup) ? "archiveStaffBanLookupRow" : "archiveBanLookupRow",
-                            new String[] { begin, server, reason, ban.getStaff(), endDate, unbanReason, unbanStaff}));
+                        new String[]{begin, server, reason, ban.getStaff(), endDate, unbanReason, unbanStaff}));
                 }
-                
+
             }
         }
 
         msg.append(lookupFooter.replace("{entity}", entity).replace("{module}", "Ban")
-                .replace("{page}", page + "/" + totalPages));
+            .replace("{page}", page + "/" + totalPages));
 
         return FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&', msg.toString()));
     }
-    
+
     public List<BaseComponent[]> formatMuteLookup(final String entity, final List<MuteEntry> mutes,
-            int page, final boolean staffLookup) throws InvalidModuleException {
+                                                  int page, final boolean staffLookup) throws InvalidModuleException {
         final StringBuilder msg = new StringBuilder();
 
-        int totalPages = (int) Math.ceil((double)mutes.size()/entriesPerPage);
-        if(mutes.size() > entriesPerPage){
-            if(page > totalPages){
+        int totalPages = (int) Math.ceil((double) mutes.size() / entriesPerPage);
+        if (mutes.size() > entriesPerPage) {
+            if (page > totalPages) {
                 page = totalPages;
             }
             int beginIndex = (page - 1) * entriesPerPage;
             int endIndex = (beginIndex + entriesPerPage < mutes.size()) ? beginIndex + entriesPerPage : mutes.size();
-            for(int i=mutes.size() -1; i > 0; i--){
-                if(i >= beginIndex && i < endIndex){
+            for (int i = mutes.size() - 1; i > 0; i--) {
+                if (i >= beginIndex && i < endIndex) {
                     continue;
                 }
                 mutes.remove(i);
             }
         }
         msg.append(lookupHeader.replace("{entity}", entity).replace("{module}", "Mute")
-                .replace("{page}", page + "/" + totalPages));
-        
+            .replace("{page}", page + "/" + totalPages));
+
         boolean isMute = false;
         for (final MuteEntry muteEntry : mutes) {
             if (muteEntry.isActive()) {
@@ -484,158 +483,158 @@ public class LookupFormatter {
         }
 
         // We begin with active ban
-        if(isMute){
+        if (isMute) {
             msg.append("&6&lActive mutes: &e");
             final Iterator<MuteEntry> it = mutes.iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 final MuteEntry mute = it.next();
-                if(!mute.isActive()){
+                if (!mute.isActive()) {
                     break;
                 }
                 final String begin = Core.defaultDF.format(mute.getBeginDate());
                 final String server = mute.getServer();
                 final String reason = mute.getReason();
                 final String end;
-                if(mute.getEndDate() == null){
+                if (mute.getEndDate() == null) {
                     end = "permanent mute";
-                }else{
+                } else {
                     end = Core.defaultDF.format(mute.getEndDate());
                 }
-                
+
                 msg.append("\n");
-                if(staffLookup){
+                if (staffLookup) {
                     msg.append(I18n.format("activeStaffMuteLookupRow",
-                            new String[] { mute.getEntity(), begin, server, reason, end}));
-                }else{
+                        new String[]{mute.getEntity(), begin, server, reason, end}));
+                } else {
                     msg.append(I18n.format("activeMuteLookupRow",
-                            new String[] { begin, server, reason, mute.getStaff(), end}));
+                        new String[]{begin, server, reason, mute.getStaff(), end}));
                 }
                 it.remove();
             }
         }
-        
-        if(!mutes.isEmpty()){
+
+        if (!mutes.isEmpty()) {
             msg.append("\n&7&lArchive mutes: &e");
-            for(final MuteEntry mute : mutes){
+            for (final MuteEntry mute : mutes) {
                 final String begin = Core.defaultDF.format(mute.getBeginDate());
                 final String server = mute.getServer();
                 final String reason = mute.getReason();
-                
+
                 final String unmuteDate;
-                if(mute.getUnmuteDate() == null){
+                if (mute.getUnmuteDate() == null) {
                     unmuteDate = Core.defaultDF.format(mute.getEndDate());
-                }else{
+                } else {
                     unmuteDate = Core.defaultDF.format(mute.getUnmuteDate());
                 }
                 final String unmuteReason = mute.getUnmuteReason();
                 String unmuteStaff = mute.getUnmuteStaff();
-                if(unmuteStaff == "null"){
+                if (unmuteStaff == "null") {
                     unmuteStaff = "temporary mute";
                 }
-                
+
                 msg.append("\n");
-                if(staffLookup){
+                if (staffLookup) {
                     msg.append(I18n.format("archiveStaffMuteLookupRow",
-                            new String[] { mute.getEntity(), begin, server, reason, unmuteDate, unmuteReason, unmuteStaff}));
-                }else{
+                        new String[]{mute.getEntity(), begin, server, reason, unmuteDate, unmuteReason, unmuteStaff}));
+                } else {
                     msg.append(I18n.format("archiveMuteLookupRow",
-                            new String[] { begin, server, reason, mute.getStaff(), unmuteDate, unmuteReason, unmuteStaff}));
+                        new String[]{begin, server, reason, mute.getStaff(), unmuteDate, unmuteReason, unmuteStaff}));
                 }
             }
         }
 
         msg.append(lookupFooter.replace("{entity}", entity).replace("{module}", "Mute")
-                .replace("{page}", page + "/" + totalPages));
+            .replace("{page}", page + "/" + totalPages));
 
         return FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&', msg.toString()));
     }
-    
+
     public List<BaseComponent[]> formatKickLookup(final String entity, final List<KickEntry> kicks,
-            int page, final boolean staffLookup) throws InvalidModuleException {
+                                                  int page, final boolean staffLookup) throws InvalidModuleException {
         final StringBuilder msg = new StringBuilder();
 
-        int totalPages = (int) Math.ceil((double)kicks.size()/entriesPerPage);
-        if(kicks.size() > entriesPerPage){
-            if(page > totalPages){
+        int totalPages = (int) Math.ceil((double) kicks.size() / entriesPerPage);
+        if (kicks.size() > entriesPerPage) {
+            if (page > totalPages) {
                 page = totalPages;
             }
             int beginIndex = (page - 1) * entriesPerPage;
             int endIndex = (beginIndex + entriesPerPage < kicks.size()) ? beginIndex + entriesPerPage : kicks.size();
-            for(int i=kicks.size() -1; i > 0; i--){
-                if(i >= beginIndex && i < endIndex){
+            for (int i = kicks.size() - 1; i > 0; i--) {
+                if (i >= beginIndex && i < endIndex) {
                     continue;
                 }
                 kicks.remove(i);
             }
         }
         msg.append(lookupHeader.replace("{entity}", entity).replace("{module}", "Kick")
-                .replace("{page}", page + "/" + totalPages));
-        
+            .replace("{page}", page + "/" + totalPages));
+
         msg.append("&6&lKick list :");
-        
-        for(final KickEntry kick : kicks){
+
+        for (final KickEntry kick : kicks) {
             final String date = Core.defaultDF.format(kick.getDate());
             final String server = kick.getServer();
             final String reason = kick.getReason();
-            
+
             msg.append("\n");
-            if(staffLookup){
+            if (staffLookup) {
                 msg.append(I18n.format("kickStaffLookupRow",
-                        new String[] { kick.getEntity(), date, server, reason}));
-            }else{
+                    new String[]{kick.getEntity(), date, server, reason}));
+            } else {
                 msg.append(I18n.format("kickLookupRow",
-                        new String[] { date, server, reason, kick.getStaff()}));
+                    new String[]{date, server, reason, kick.getStaff()}));
             }
         }
 
         msg.append(lookupFooter.replace("{entity}", entity).replace("{module}", "Kick")
-                .replace("{page}", page + "/" + totalPages));
+            .replace("{page}", page + "/" + totalPages));
 
         return FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&', msg.toString()));
     }
-    
-    public List<BaseComponent[]> commentRowLookup(final String entity, final List<CommentEntry> comments,
-            int page, final boolean staffLookup) throws InvalidModuleException {{
-        final StringBuilder msg = new StringBuilder();
 
-        int totalPages = (int) Math.ceil((double)comments.size()/entriesPerPage);
-        if(comments.size() > entriesPerPage){
-            if(page > totalPages){
-                page = totalPages;
-            }
-            int beginIndex = (page - 1) * entriesPerPage;
-            int endIndex = (beginIndex + entriesPerPage < comments.size()) ? beginIndex + entriesPerPage : comments.size();
-            for(int i=comments.size() -1; i > 0; i--){
-                if(i >= beginIndex && i < endIndex){
-                    continue;
+    public List<BaseComponent[]> commentRowLookup(final String entity, final List<CommentEntry> comments,
+                                                  int page, final boolean staffLookup) throws InvalidModuleException {
+        {
+            final StringBuilder msg = new StringBuilder();
+
+            int totalPages = (int) Math.ceil((double) comments.size() / entriesPerPage);
+            if (comments.size() > entriesPerPage) {
+                if (page > totalPages) {
+                    page = totalPages;
                 }
-                comments.remove(i);
+                int beginIndex = (page - 1) * entriesPerPage;
+                int endIndex = (beginIndex + entriesPerPage < comments.size()) ? beginIndex + entriesPerPage : comments.size();
+                for (int i = comments.size() - 1; i > 0; i--) {
+                    if (i >= beginIndex && i < endIndex) {
+                        continue;
+                    }
+                    comments.remove(i);
+                }
             }
-        }
-        msg.append(lookupHeader.replace("{entity}", entity).replace("{module}", "Comment")
+            msg.append(lookupHeader.replace("{entity}", entity).replace("{module}", "Comment")
                 .replace("{page}", page + "/" + totalPages));
-        
-        msg.append("&6&lComment list :");
-        
-        for(final CommentEntry comm : comments){
-            msg.append("\n");
-            if(staffLookup){
-                msg.append(I18n.format("commentRow", new String[]{String.valueOf(comm.getID()),
+
+            msg.append("&6&lComment list :");
+
+            for (final CommentEntry comm : comments) {
+                msg.append("\n");
+                if (staffLookup) {
+                    msg.append(I18n.format("commentRow", new String[]{String.valueOf(comm.getID()),
                         (comm.getType() == Type.NOTE) ? "&eComment" : "&cWarning", comm.getContent(),
                         comm.getFormattedDate(), comm.getAuthor()}));
-            }
-            else{
-                msg.append(I18n.format("commentStaffRow", new String[]{String.valueOf(comm.getID()),
-                        (comm.getType() == Type.NOTE) ? "&eComment" : "&cWarning", 
+                } else {
+                    msg.append(I18n.format("commentStaffRow", new String[]{String.valueOf(comm.getID()),
+                        (comm.getType() == Type.NOTE) ? "&eComment" : "&cWarning",
                         comm.getEntity(), comm.getContent(), comm.getFormattedDate()}));
+                }
             }
-        }
 
-        msg.append(lookupFooter.replace("{entity}", entity).replace("{module}", "Comment")
+            msg.append(lookupFooter.replace("{entity}", entity).replace("{module}", "Comment")
                 .replace("{page}", page + "/" + totalPages));
 
-        return FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&', msg.toString()));
+            return FormatUtils.formatNewLine(ChatColor.translateAlternateColorCodes('&', msg.toString()));
+        }
+
     }
-    
-}
 }

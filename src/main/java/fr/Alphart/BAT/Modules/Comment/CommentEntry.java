@@ -6,52 +6,52 @@ import java.util.TimeZone;
 import fr.Alphart.BAT.Modules.Core.Core;
 
 public class CommentEntry {
-	private Calendar localTime = Calendar.getInstance(TimeZone.getDefault());
-	private final int id;
-	private final String entity;
-	private final String content;
-	private final String author;
-	private final Type type;
+    private Calendar localTime = Calendar.getInstance(TimeZone.getDefault());
+    private final int id;
+    private final String entity;
+    private final String content;
+    private final String author;
+    private final Type type;
 
-	public CommentEntry(final int id, final String entity, final String note, final String author, final Type type, final long date) {
-		this.id = id;
-		this.entity = entity;
-		this.content = note;
-		this.author = author;
-		this.type = type;
-		localTime.setTimeInMillis(date);
-	}
+    public CommentEntry(final int id, final String entity, final String note, final String author, final Type type, final long date) {
+        this.id = id;
+        this.entity = entity;
+        this.content = note;
+        this.author = author;
+        this.type = type;
+        localTime.setTimeInMillis(date);
+    }
 
-	public int getID(){
-		return id;
-	}
-	
-	public String getEntity() {
-		return entity;
-	}
+    public int getID() {
+        return id;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getEntity() {
+        return entity;
+    }
 
-	public String getAuthor() {
-		return author;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public Type getType() {
-		return type;
-	}
+    public String getAuthor() {
+        return author;
+    }
 
-	public Calendar getDate() {
-		return localTime;
-	}
+    public Type getType() {
+        return type;
+    }
 
-	public String getFormattedDate(){
-		return Core.defaultDF.format(localTime.getTime());
-	}
-	
-	public enum Type{
-		NOTE,
-		WARNING;
-	}
+    public Calendar getDate() {
+        return localTime;
+    }
+
+    public String getFormattedDate() {
+        return Core.defaultDF.format(localTime.getTime());
+    }
+
+    public enum Type {
+        NOTE,
+        WARNING;
+    }
 }

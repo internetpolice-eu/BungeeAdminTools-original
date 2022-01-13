@@ -27,162 +27,162 @@ import fr.Alphart.BAT.database.SQLQueries;
  * entity.
  */
 public class EntityEntry {
-	public static final Timestamp noDateFound = new Timestamp(877478400); 
-	// No use of the standard timestamp because the standard one is a good way to find when error happens (as 1970 isn't an usual date on mcserver)
-	
-	private final String entity;
+    public static final Timestamp noDateFound = new Timestamp(877478400);
+    // No use of the standard timestamp because the standard one is a good way to find when error happens (as 1970 isn't an usual date on mcserver)
 
-	private final List<BanEntry> bans = new ArrayList<BanEntry>();
-	private final List<MuteEntry> mutes = new ArrayList<MuteEntry>();
-	private final List<KickEntry> kicks = new ArrayList<KickEntry>();
-	private final List<CommentEntry> comments = new ArrayList<CommentEntry>();
+    private final String entity;
 
-	private Timestamp firstLogin;
-	private Timestamp lastLogin;
-	private String lastIP = "0.0.0.0";
+    private final List<BanEntry> bans = new ArrayList<BanEntry>();
+    private final List<MuteEntry> mutes = new ArrayList<MuteEntry>();
+    private final List<KickEntry> kicks = new ArrayList<KickEntry>();
+    private final List<CommentEntry> comments = new ArrayList<CommentEntry>();
 
-	private final List<String> ipUsers = new ArrayList<String>();
+    private Timestamp firstLogin;
+    private Timestamp lastLogin;
+    private String lastIP = "0.0.0.0";
 
-	private boolean exist = true;
-	private boolean player = false;
+    private final List<String> ipUsers = new ArrayList<String>();
 
-	public EntityEntry(final String entity) {
-		this.entity = entity;
+    private boolean exist = true;
+    private boolean player = false;
 
-		// This is a player
-		if (!Utils.validIP(entity)) {
-			// Get players basic information (first/last login, last ip)
-			player = true;
-			PreparedStatement statement = null;
-			ResultSet resultSet = null;
-			try (Connection conn = BAT.getConnection()) {
-				statement = (DataSourceHandler.isSQLite()) ? conn
-						.prepareStatement(SQLQueries.Core.SQLite.getPlayerData) : conn
-						.prepareStatement(SQLQueries.Core.getPlayerData);
-						statement.setString(1, Core.getUUID(entity));
+    public EntityEntry(final String entity) {
+        this.entity = entity;
 
-						resultSet = statement.executeQuery();
+        // This is a player
+        if (!Utils.validIP(entity)) {
+            // Get players basic information (first/last login, last ip)
+            player = true;
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            try (Connection conn = BAT.getConnection()) {
+                statement = (DataSourceHandler.isSQLite()) ? conn
+                    .prepareStatement(SQLQueries.Core.SQLite.getPlayerData) : conn
+                    .prepareStatement(SQLQueries.Core.getPlayerData);
+                statement.setString(1, Core.getUUID(entity));
 
-						if (resultSet.next()) {
-							if (DataSourceHandler.isSQLite()) {
-								firstLogin = new Timestamp(resultSet.getLong("strftime('%s',firstlogin)") * 1000);
-								lastLogin = new Timestamp(resultSet.getLong("strftime('%s',lastlogin)") * 1000);
-							} else {
-								firstLogin = resultSet.getTimestamp("firstlogin");
-								lastLogin = resultSet.getTimestamp("lastlogin");
-							}
-							final ProxiedPlayer player = ProxyServer.getInstance().getPlayer(entity);
-							if (player != null) {
-								lastIP = Utils.getPlayerIP(player);
-							} else {
-								lastIP = resultSet.getString("lastip");
-							}
-						}
-						if(firstLogin == null){
-						    firstLogin = noDateFound;
-						}
-						if(lastLogin == null){
-						    lastLogin = noDateFound;
-						}
-			} catch (final SQLException e) {
-				DataSourceHandler.handleException(e);
-			} finally {
-				DataSourceHandler.close(statement, resultSet);
-			}
-		}
+                resultSet = statement.executeQuery();
 
-		// This is an ip
-		else {
-			// Get users from this ip
-			PreparedStatement statement = null;
-			ResultSet resultSet = null;
-			try (Connection conn = BAT.getConnection()) {
-				statement = conn.prepareStatement(SQLQueries.Core.getIpUsers);
-				statement.setString(1, entity);
+                if (resultSet.next()) {
+                    if (DataSourceHandler.isSQLite()) {
+                        firstLogin = new Timestamp(resultSet.getLong("strftime('%s',firstlogin)") * 1000);
+                        lastLogin = new Timestamp(resultSet.getLong("strftime('%s',lastlogin)") * 1000);
+                    } else {
+                        firstLogin = resultSet.getTimestamp("firstlogin");
+                        lastLogin = resultSet.getTimestamp("lastlogin");
+                    }
+                    final ProxiedPlayer player = ProxyServer.getInstance().getPlayer(entity);
+                    if (player != null) {
+                        lastIP = Utils.getPlayerIP(player);
+                    } else {
+                        lastIP = resultSet.getString("lastip");
+                    }
+                }
+                if (firstLogin == null) {
+                    firstLogin = noDateFound;
+                }
+                if (lastLogin == null) {
+                    lastLogin = noDateFound;
+                }
+            } catch (final SQLException e) {
+                DataSourceHandler.handleException(e);
+            } finally {
+                DataSourceHandler.close(statement, resultSet);
+            }
+        }
 
-				resultSet = statement.executeQuery();
+        // This is an ip
+        else {
+            // Get users from this ip
+            PreparedStatement statement = null;
+            ResultSet resultSet = null;
+            try (Connection conn = BAT.getConnection()) {
+                statement = conn.prepareStatement(SQLQueries.Core.getIpUsers);
+                statement.setString(1, entity);
 
-				while (resultSet.next()) {
-					ipUsers.add(resultSet.getString("BAT_player"));
-				}
-			} catch (final SQLException e) {
-				DataSourceHandler.handleException(e);
-			} finally {
-				DataSourceHandler.close(statement, resultSet);
-			}
-		}
-		
-		// Load the data related to this entity of each modules
-		final ModulesManager modules = BAT.getInstance().getModules();
-		try {
-			if (modules.isLoaded("ban")) {
-				bans.addAll(modules.getBanModule().getBanData(entity));
-			}
-			if (modules.isLoaded("mute")) {
-				mutes.addAll(modules.getMuteModule().getMuteData(entity));
-			}
-			// No ip kick
-			if (modules.isLoaded("kick") && ipUsers.isEmpty()) {
-				kicks.addAll(modules.getKickModule().getKickData(entity));
-			}
-			if(modules.isLoaded("comment")){
-				comments.addAll(modules.getCommentModule().getComments(entity));
-			}		
-		} catch (final InvalidModuleException | UUIDNotFoundException e) {
-			if(e instanceof UUIDNotFoundException){
-				exist = false;
-			}
-		}
+                resultSet = statement.executeQuery();
 
-	}
+                while (resultSet.next()) {
+                    ipUsers.add(resultSet.getString("BAT_player"));
+                }
+            } catch (final SQLException e) {
+                DataSourceHandler.handleException(e);
+            } finally {
+                DataSourceHandler.close(statement, resultSet);
+            }
+        }
 
-	public String getEntity() {
-		return entity;
-	}
+        // Load the data related to this entity of each modules
+        final ModulesManager modules = BAT.getInstance().getModules();
+        try {
+            if (modules.isLoaded("ban")) {
+                bans.addAll(modules.getBanModule().getBanData(entity));
+            }
+            if (modules.isLoaded("mute")) {
+                mutes.addAll(modules.getMuteModule().getMuteData(entity));
+            }
+            // No ip kick
+            if (modules.isLoaded("kick") && ipUsers.isEmpty()) {
+                kicks.addAll(modules.getKickModule().getKickData(entity));
+            }
+            if (modules.isLoaded("comment")) {
+                comments.addAll(modules.getCommentModule().getComments(entity));
+            }
+        } catch (final InvalidModuleException | UUIDNotFoundException e) {
+            if (e instanceof UUIDNotFoundException) {
+                exist = false;
+            }
+        }
 
-	public List<BanEntry> getBans() {
-		return bans;
-	}
+    }
 
-	public List<MuteEntry> getMutes() {
-		return mutes;
-	}
+    public String getEntity() {
+        return entity;
+    }
 
-	public List<KickEntry> getKicks() {
-		return kicks;
-	}
+    public List<BanEntry> getBans() {
+        return bans;
+    }
 
-	public List<CommentEntry> getComments(){
-		return comments;
-	}
-	
-	public boolean exist() {
-		return exist;
-	}
+    public List<MuteEntry> getMutes() {
+        return mutes;
+    }
 
-	public boolean isPlayer() {
-		return player;
-	}
+    public List<KickEntry> getKicks() {
+        return kicks;
+    }
 
-	public Timestamp getFirstLogin() {
-		return firstLogin;
-	}
+    public List<CommentEntry> getComments() {
+        return comments;
+    }
 
-	public Timestamp getLastLogin() {
-		return lastLogin;
-	}
+    public boolean exist() {
+        return exist;
+    }
 
-	public String getLastIP() {
-		return lastIP;
-	}
+    public boolean isPlayer() {
+        return player;
+    }
 
-	/**
-	 * Get the players who have this ip as last ip used <br>
-	 * Only works if the <b>entity is an adress ip</b>
-	 * 
-	 * @return list of players name
-	 */
-	public List<String> getUsers() {
-		return ipUsers;
-	}
+    public Timestamp getFirstLogin() {
+        return firstLogin;
+    }
+
+    public Timestamp getLastLogin() {
+        return lastLogin;
+    }
+
+    public String getLastIP() {
+        return lastIP;
+    }
+
+    /**
+     * Get the players who have this ip as last ip used <br>
+     * Only works if the <b>entity is an adress ip</b>
+     *
+     * @return list of players name
+     */
+    public List<String> getUsers() {
+        return ipUsers;
+    }
 }

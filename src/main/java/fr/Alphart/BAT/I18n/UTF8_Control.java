@@ -11,33 +11,33 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
 public class UTF8_Control extends Control {
-	@Override
-	public ResourceBundle newBundle(final String baseName, final Locale locale, final String format,
-			final ClassLoader loader, final boolean reload) throws IllegalAccessException, InstantiationException,
-			IOException {
-		final String bundleName = toBundleName(baseName, locale);
-		final String resourceName = toResourceName(bundleName, "language");
-		ResourceBundle bundle = null;
-		InputStream stream = null;
-		if (reload) {
-			final URL url = loader.getResource(resourceName);
-			if (url != null) {
-				final URLConnection connection = url.openConnection();
-				if (connection != null) {
-					connection.setUseCaches(false);
-					stream = connection.getInputStream();
-				}
-			}
-		} else {
-			stream = loader.getResourceAsStream(resourceName);
-		}
-		if (stream != null) {
-			try {
-				bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
-			} finally {
-				stream.close();
-			}
-		}
-		return bundle;
-	}
+    @Override
+    public ResourceBundle newBundle(final String baseName, final Locale locale, final String format,
+                                    final ClassLoader loader, final boolean reload) throws IllegalAccessException, InstantiationException,
+        IOException {
+        final String bundleName = toBundleName(baseName, locale);
+        final String resourceName = toResourceName(bundleName, "language");
+        ResourceBundle bundle = null;
+        InputStream stream = null;
+        if (reload) {
+            final URL url = loader.getResource(resourceName);
+            if (url != null) {
+                final URLConnection connection = url.openConnection();
+                if (connection != null) {
+                    connection.setUseCaches(false);
+                    stream = connection.getInputStream();
+                }
+            }
+        } else {
+            stream = loader.getResourceAsStream(resourceName);
+        }
+        if (stream != null) {
+            try {
+                bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+            } finally {
+                stream.close();
+            }
+        }
+        return bundle;
+    }
 }
