@@ -89,13 +89,13 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.25</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.36.0.2</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.imaginarycode.minecraft</groupId>
@@ -146,22 +146,12 @@
                             <artifactSet>
                                 <includes>
                                     <include>com.zaxxer:HikariCP</include>
-                                    <include>mysql:mysql-connector-java</include>
-                                    <include>org.xerial:sqlite-jdbc</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>fr.Alphart.BAT.libs.hikari</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.mysql</pattern>
-                                    <shadedPattern>fr.Alphart.BAT.libs.mysql</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.sqlite</pattern>
-                                    <shadedPattern>fr.Alphart.BAT.libs.sqlite</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
