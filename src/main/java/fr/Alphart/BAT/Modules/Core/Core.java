@@ -1,6 +1,5 @@
 package fr.Alphart.BAT.Modules.Core;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +22,6 @@ import net.md_5.bungee.event.EventHandler;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.gson.Gson;
 import com.imaginarycode.minecraft.redisbungee.RedisBungee;
 
 import fr.Alphart.BAT.BAT;
@@ -86,7 +84,6 @@ public class Core implements IModule, Listener {
             });
     private final String name = "core";
     private List<BATCommand> cmds;
-    private Gson gson = new Gson();
     private static PermissionProvider bungeePerms;
     public static EnhancedDateFormat defaultDF = new EnhancedDateFormat(false);
 

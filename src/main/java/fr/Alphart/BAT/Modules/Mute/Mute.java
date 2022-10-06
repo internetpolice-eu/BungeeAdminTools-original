@@ -1,6 +1,5 @@
 package fr.Alphart.BAT.Modules.Mute;
 
-import static fr.Alphart.BAT.I18n.I18n.format;
 import static fr.Alphart.BAT.I18n.I18n.formatWithPrefix;
 
 import java.sql.Connection;

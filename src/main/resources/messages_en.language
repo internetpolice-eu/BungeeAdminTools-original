@@ -71,7 +71,6 @@ playerLookup=&f---- &9Lookup {effect="hover" text="&b{player}" onHoverText="{uui
 ¤¤¤¤¤¤¤¤¤¤¤¤&a{kicks_number} kicks\n\
 &eLast three comments: \n\
 ¤¤&a{last_comments:3}\n\
-&ePlayer's name history: &a{name_history_list}\n\
 &eUUID: &a{uuid}\n\
 &eSame IP players: &3{ip_users}\n\
 &f---- &9Lookup &b{player} &f----

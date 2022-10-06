@@ -11,7 +11,7 @@ notBannedAny=&c{0} ist nicht gebannt.
 notBannedIP=&c{0} ist nicht IP gebannt.
 unbanBroadcast=&a{0}&e wurde von &a{1}&e vom Server &a{2}&6 entbannt.&e Grund : {3}
 wasBannedNotif=Du wurdest gebannt. &eGrund : {0}
- 
+
 # Mute module
 alreadyMute=&cDieser Spieler wurde schon gemutet!
 isMute=Du wurdest am {1} von {2} auf diesem Server gemutet. Grund: {0}
@@ -25,13 +25,13 @@ unmuteBroadcast=&a{0}&e wurde von &a{1}&e vom Server &a{2}&6 entmutet. &eGrund :
 wasMutedNotif=Du wurdest gemutet. &eGrund : {0}
 wasUnmutedNotif=Du wurdest entmutet. &eGrund : {0}
 loadingMutedata=Daten werden gerade abgerufen! Bitte versuche es in wenigen Sekunden nochmal!
- 
+
 # Kick module
 kickBroadcast=&a{0}&e wurde von &a{1}&e vom Server &a{2}&6 gekickt! &eGrund : {3}
 gKickBroadcast=&a{0}&e wurde von &a{1}&e vom Netzwerk gekickt! &eGrund : {2}
 wasKickedNotif=Du wurdest gekickt! Grund : {0}
 cantKickDefaultServer=&cDer Spieler {0} befindet sich bereits auf dem standard Server. Du kannst ihn nicht kicken.
- 
+
 # Comment module
 warnBroadcast=&a{0}&e wurde von &a{1} &6verwarnt&e. Grund : {2}
 wasWarnedNotif=Du wurdest verwarnt. Grund : {0}
@@ -39,8 +39,8 @@ commentsCleared=&eDie Bemerkungen von &a{0}&e wurden entfernt.
 commentAdded=&eDie Bemerkung wurde erfolgreich hinzugefügt.
 noCommentIDFound={0} hat keine Bemerkung mit dieser ID.
 commentIDCleared=Die Bemerkung &b#{0}&e von &a{1}&e wurde entfernt.
- 
- 
+
+
 # --- Lookup ---
 # Player lookup - aims at providing a quick view of a player's situation
 # This message is really big (a lookup is multiline), therefore placeholders aren't {0}, {1} ...
@@ -67,7 +67,6 @@ playerLookup=&f---- &9Statisiken &b{player} &f----\n\
 ¤¤¤¤¤¤¤¤¤¤¤¤&a{kicks_number} kicks\n\
 &eLetzten drei Bemerkungen: \n\
 ¤¤&a{last_comments:3}\n\
-&eVergangene Namen : &a{name_history_list}\n\
 &eUUID : &a{uuid}\n\
 &eGleiche IP Spieler: &3{ip_users}\n\
 &f---- &9Statistiken &b{player} &f----
@@ -76,7 +75,7 @@ playerLookup=&f---- &9Statisiken &b{player} &f----\n\
 connectionStateOnline=&a&lVerbunden &r&auf server &3{server}
 connectionStateOffline=&8&lOffline
 hiddenIp=&7Versteckt
- 
+
 # Staff lookup - same rules as the player lookup (read above)
 staffLookup=&f---- &9&nSTAFF Statistiken&r &b{staff} &f----\n\
 &eStatistics :\n\
@@ -85,7 +84,7 @@ staffLookup=&f---- &9&nSTAFF Statistiken&r &b{staff} &f----\n\
 ¤¤&b{staff}&e hat &a{kicks_number}&e Kicks und &a{warnings_number}&e Verwarnungen erteilt\n\
 ¤¤&b{staff}&e hat &a{comments_number}&e Bemerkungen geschrieben\n\
 &f---- &9&nSTAFF Statistiken&r &b{staff} &f----
- 
+
 # IP lookup - same rules as the player lookup (read above)
 # If you experience lag during an IP lookup, remove the {ip_location} placeholder
 ipLookup=&f---- &9Statiskiken &b{ip} &f----\n\
@@ -98,12 +97,12 @@ ipLookup=&f---- &9Statiskiken &b{ip} &f----\n\
 &eVergangenheit : &a{bans_number} Bans\n\
 ¤¤¤¤¤¤¤¤¤¤¤¤&a{mutes_number} Mutes\n\
 &f---- &9Statistiken &b{ip} &f----
- 
- 
+
+
 # Per module lookup headers
 perModuleLookupHeader=&f---- &9Lookup &f- &b{entity} &f-&a {module} &f-&6 Page {page} &f----\n
 perModuleLookupFooter=\n&f---- &9Lookup &f- &b{entity} &f-&a {module} &f-&6 Page {page} &f----
- 
+
 # Per module player lookup
 activeBanLookupRow=&6* &eBeginn:&a {0} &eServer:&a {1} &eGrund:&a {2} &eGebannt von:&a {3} &eEndet:&a {4}
 archiveBanLookupRow=&6* &eBeginn:&a {0} &eServer:&a {1} &eGrund:&a {2} &eGebannt von:&a {3}\
@@ -113,7 +112,7 @@ archiveMuteLookupRow=&6* &eBeginn:&a {0} &eServer:&a {1} &eGrund:&a {2} &eGemute
 \n&6Datum:&a {4} &6Entmute Grund:&a {5} &6Entmutet von:&a {6}
 kickLookupRow=&6* &eDatum:&a {0} &eServer:&a {1} &eGrund:&a {2} &eGekickt von:&a {3}
 commentRow=&a#{0}&e {1}&f Inhalt: &a{2} &fDatum: &6{3} &fErstellt von: &B{4}
- 
+
 # Per module staff lookup
 activeStaffBanLookupRow=&6* &eSpieler:&a {0} &eBeginn:&a {1} &eServer:&a {2} &eGrund:&a {3} &eEndet:&a {4}
 archiveStaffBanLookupRow=&6* &eSpieler:&a {0} &eBeginn:&a {1} &eServer:&a {2} &eGrund:&a {3}\
@@ -123,8 +122,8 @@ archiveStaffMuteLookupRow=&6* &eSpieler:&a {0} &eBeginn:&a {1} &eServer:&a {2} &
 \n&6Datum:&a {4} &6Entmute Grund:&a {5} &6Entmutet von:&a {6}
 kickStaffLookupRow=&6* &eSpieler:&a {0} &eDatum:&a {1} &eServer:&a {2} &eGrund:&a {3}
 commentStaffRow=&a#{0}&e {1}&f &eSpieler:&a {2} Inhalt: &a{3} &fDatum: &6{4}
- 
- 
+
+
 # --- Miscellaneous ---
 # Command related message
 invalidArgs=Fehlerhafte Eingabe. {0}

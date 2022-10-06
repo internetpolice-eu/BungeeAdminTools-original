@@ -1,7 +1,5 @@
 package fr.Alphart.BAT.Modules.Kick;
 
-import static fr.Alphart.BAT.I18n.I18n.format;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

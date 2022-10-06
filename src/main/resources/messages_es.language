@@ -67,7 +67,6 @@ playerLookup=&f---- &9Búsqueda &b{player} &f----\n\
 ¤¤¤¤¤¤¤¤¤¤¤¤&a{kicks_number} expulsiones\n\
 &eÚltimos tres comentarios : \n\
 ¤¤&a{last_comments:3}\n\
-&eHistorial de nombres de jugador : &a{name_history_list}\n\
 &eUUID : &a{uuid}\n\
 &f---- &9Búsqueda &b{player} &f----
 # END of the player lookup message
@@ -75,7 +74,7 @@ playerLookup=&f---- &9Búsqueda &b{player} &f----\n\
 connectionStateOnline=&a&lConectado &r&een el servidor &3{server}
 connectionStateOffline=&8&lDesconectado
 hiddenIp=&7Oculto
- 
+
 # Staff lookup - same rules as the player lookup (read above)
 staffLookup=&f---- &9&nSTAFF búsqueda&r &b{staff} &f----\n\
 &eStatistics :\n\
@@ -84,7 +83,7 @@ staffLookup=&f---- &9&nSTAFF búsqueda&r &b{staff} &f----\n\
 ¤¤&b{staff}&e ha realizado &a{kicks_number}&e expulsiones y &a{warnings_number}&e avisos\n\
 ¤¤&b{staff}&e ha escrito &a{comments_number}&e comentarios\n\
 &f---- &9&nSTAFF búsqueda&r &b{staff} &f----
- 
+
 # IP lookup - same rules as the player lookup (read above)
 # If you experience lag during an IP lookup, remove the {ip_location} placeholder
 ipLookup=&f---- &9Búsqueda &b{ip} &f----\n\
@@ -97,8 +96,8 @@ ipLookup=&f---- &9Búsqueda &b{ip} &f----\n\
 &eHistorial : &a{bans_number} bans\n\
 ¤¤¤¤¤¤¤¤¤¤¤¤&a{mutes_number} mutes\n\
 &f---- &9Búsqueda &b{ip} &f----
- 
- 
+
+
 # Per module lookup headers
 perModuleLookupHeader=&f---- &9Búsqueda &f- &b{entity} &f-&a {module} &f-&6 Página {page} &f----\n
 perModuleLookupFooter=\n&f---- &9Búsqueda &f- &b{entity} &f-&a {module} &f-&6 Página {page} &f----

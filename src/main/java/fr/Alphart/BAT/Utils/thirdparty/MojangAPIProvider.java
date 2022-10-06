@@ -1,101 +1,78 @@
 package fr.Alphart.BAT.Utils.thirdparty;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 
-import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import fr.Alphart.BAT.BAT;
-import fr.Alphart.BAT.Modules.Core.Core;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.util.Timeout;
+import org.jetbrains.annotations.Nullable;
 
 public class MojangAPIProvider {
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
+    private static final String UUID_RETRIEVAL_URL = "https://api.mojang.com/users/profiles/minecraft/";
 
-    private static final String uuidRetrievalUrl = "https://api.mojang.com/users/profiles/minecraft/";
-    private static final String nameHistoryUrl = "";
-
-    public static String getUUID(final String pName) {
-        BufferedReader reader = null;
+    public static @Nullable String getUUID(final String playerName) {
         try {
-            final URL url = new URL(uuidRetrievalUrl + pName);
-            final URLConnection conn = url.openConnection();
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder content = new StringBuilder();
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                content.append(line);
-            }
-
-            MojangUUIDProfile p = gson.fromJson(content.toString(), MojangUUIDProfile.class);
-            if (p != null && !p.id.isEmpty()) {
-                return p.id;
-            }
-        } catch (IOException e) {
-            BAT.getInstance().getLogger().log(Level.CONFIG, "Can't retrieve UUID from mojang servers", e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
+            String json = requestFromMojang(UUID_RETRIEVAL_URL + playerName);
+            if (json != null) {
+                JsonObject profile = gson.fromJson(json, JsonObject.class);
+                if (profile != null && profile.get("id") != null) {
+                    return profile.get("id").getAsString();
                 }
             }
+        } catch (JsonSyntaxException ex) {
+            BAT.getInstance().getLogger().log(Level.WARNING, "Failed to parse Mojang JSON.", ex);
         }
         return null;
     }
 
-    /**
-     * Fetch a player's name history from <b>Mojang's server : high latency</b>
-     *
-     * @param pName
-     * @throws RuntimeException | if any error is met or if the server is offline mode
-     */
-    public static List<String> getPlayerNameHistory(final String pName) throws RuntimeException {
-        if (!Core.isOnlineMode()) {
-            throw new RuntimeException("Can't get player name history from an offline server !");
-        }
-        // Fetch player's name history from Mojang servers
-        BufferedReader reader = null;
-        try {
-            final URL mojangURL = new URL("https://api.mojang.com/user/profiles/" + Core.getUUID(pName) + "/names");
-            final URLConnection conn = mojangURL.openConnection();
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String content = "";
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content += line;
-            }
-            final List<String> names = Lists.newArrayList();
-            for (final Map<String, Object> entry :
-                (Set<Map<String, Object>>) gson.fromJson(content, new TypeToken<Set<Map<String, Object>>>() {
-                }.getType())) {
-                names.add((String) entry.get("name"));
-            }
-            return names;
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (reader != null) {
+    private static @Nullable String requestFromMojang(String url) {
+        try (final CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            URI uri = new URIBuilder(url).build();
+
+            int CONNECTION_TIMEOUT = 10;
+            RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(Timeout.ofSeconds(CONNECTION_TIMEOUT))
+                .setConnectTimeout(Timeout.ofSeconds(CONNECTION_TIMEOUT))
+                .setResponseTimeout(Timeout.ofSeconds(CONNECTION_TIMEOUT))
+                .build();
+
+            HttpGet request = new HttpGet(uri);
+            request.setConfig(requestConfig);
+            ClassicHttpResponse response = httpClient.execute(request);
+
+            int status = response.getCode();
+            if (status >= HttpStatus.SC_SUCCESS && status < HttpStatus.SC_REDIRECTION) {
+                final HttpEntity entity = response.getEntity();
                 try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    return entity != null ? EntityUtils.toString(entity) : null;
+                } catch (final ParseException ex) {
+                    BAT.getInstance().getLogger().log(Level.SEVERE, "Failed to parse HTTP response.", ex);
+                    return null;
                 }
             }
+        } catch (IOException ex) {
+            BAT.getInstance().getLogger().log(Level.SEVERE, "Exception while requesting " + url + " from Mojang.", ex);
+        } catch (URISyntaxException ex) {
+            BAT.getInstance().getLogger().log(Level.WARNING, "Trying to request invalid URL: " + url, ex);
         }
-    }
 
-    private class MojangUUIDProfile {
-        String id;
-        String name;
+        return null;
     }
 }

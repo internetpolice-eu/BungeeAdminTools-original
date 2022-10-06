@@ -32,7 +32,6 @@ import fr.Alphart.BAT.Modules.Kick.KickEntry;
 import fr.Alphart.BAT.Modules.Mute.MuteEntry;
 import fr.Alphart.BAT.Utils.FormatUtils;
 import fr.Alphart.BAT.Utils.Utils;
-import fr.Alphart.BAT.Utils.thirdparty.MojangAPIProvider;
 
 public class LookupFormatter {
     private ModulesManager modules;
@@ -154,21 +153,6 @@ public class LookupFormatter {
             ? ((displayIP) ? pDetails.getLastIP() : format("hiddenIp"))
             : format("unknownIp");
 
-        String name_history_list;
-        // Create a function for that or something better than a big chunk of code inside the lookup
-        if (Core.isOnlineMode()) {
-            try {
-                name_history_list = Joiner.on("&e, &a").join(MojangAPIProvider.getPlayerNameHistory(pName));
-            } catch (final RuntimeException e) {
-                name_history_list = "unable to fetch player's name history. Check the logs";
-                BAT.getInstance().getLogger().severe("An error occured while fetching " + pName + "'s name history from mojang servers."
-                    + "Please report this : ");
-                e.printStackTrace();
-            }
-        } else {
-            name_history_list = "offline server";
-        }
-
         int commentsNumber = pDetails.getComments().size();
         String last_comments = "";
         // We need to parse the number of last comments from the lookup pattern
@@ -216,7 +200,7 @@ public class LookupFormatter {
                 .replace("{first_login}", first_login).replace("{last_login}", last_login).replace("{last_ip}", last_ip)
                 .replace("{bans_number}", String.valueOf(bansNumber)).replace("{mutes_number}", String.valueOf(mutesNumber))
                 .replace("{kicks_number}", String.valueOf(kicksNumber)).replace("{comments_number}", String.valueOf(commentsNumber))
-                .replace("{name_history_list}", name_history_list).replaceAll("\\{last_comments:\\d\\}", last_comments)
+                .replaceAll("\\{last_comments:\\d\\}", last_comments)
                 .replace("{player}", pName).replace("{uuid}", Core.getUUID(pName))
                 .replace("{ip_users}", ip_users)
                 // '¤' is used as a space character, so we replace it with space and display correctly the escaped one

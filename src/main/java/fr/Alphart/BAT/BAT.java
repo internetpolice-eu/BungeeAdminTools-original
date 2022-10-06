@@ -37,6 +37,9 @@ import fr.Alphart.BAT.Utils.CallbackUtils.Callback;
 import fr.Alphart.BAT.Utils.RedisUtils;
 import fr.Alphart.BAT.Utils.Utils;
 import fr.Alphart.BAT.database.DataSourceHandler;
+import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.CustomChart;
+import org.bstats.charts.SimplePie;
 
 /**
  * Main class BungeeAdminTools
@@ -92,6 +95,12 @@ public class BAT extends Plugin {
                 I18n.getString("global");
             }
         });
+
+        Metrics metrics = new Metrics(this, 16599);
+        metrics.addCustomChart(new SimplePie("bungeeperms", () ->
+            ProxyServer.getInstance().getPluginManager().getPlugin("BungeePerms") != null ? "yes" : "no"));
+        metrics.addCustomChart(new SimplePie("database_backend", () -> config.isMysql_enabled() ? "mysql" : "sqlite"));
+        metrics.addCustomChart(new SimplePie("redis", () -> redis.isRedisEnabled() ? "yes" : "no"));
     }
 
     @Override

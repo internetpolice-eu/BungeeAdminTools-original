@@ -67,7 +67,6 @@ playerLookup=&f---- &9Lookup {effect="hover" text="&b{player}" onHoverText="{uui
 ¤¤¤¤¤¤¤¤¤¤¤¤&a{kicks_number} kicks\n\
 &eTrois derniers commentaires sur ce joueur: \n\
 ¤¤&a{last_comments:3}\n\
-&eHistorique des changements de nom : &a{name_history_list}\n\
 &eUUID : &a{uuid}\n\
 &eJoueurs avec même IP: &3{ip_users}\n\
 &f---- &9Lookup &b{player} &f----
